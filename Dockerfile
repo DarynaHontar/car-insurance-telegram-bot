@@ -1,19 +1,25 @@
-﻿# Use the official .NET 8 SDK image to build the app
+﻿# Build the application
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /app
+WORKDIR /src
 
-# Copy csproj and restore as distinct layers
+# Copy the project files (only the .csproj file for restoring dependencies)
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copy everything else and build the app
+# Copy the remaining files and build the application in Release mode
 COPY . ./
-RUN dotnet publish -c Release -o out
+WORKDIR /src
+RUN dotnet publish -c Release -o /app
 
-# Use the ASP.NET Core runtime image to run the app
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+# Create a runtime image for running the application
+FROM mcr.microsoft.com/dotnet/runtime:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/out .
 
-# Set the entry point to run the application
+# Copy the built application from the build stage
+COPY --from=build /app ./
+
+# Set the entry point to start the application
 ENTRYPOINT ["dotnet", "CarInsuranceTelegramBot.dll"]
+
+
+
