@@ -9,7 +9,7 @@ namespace CarInsuranceTelegramBot
         {
             try
             {
-                var botToken = "botToken";
+                var botToken = Environment.GetEnvironmentVariable("TELEGRAM_BOT_TOKEN");
                 var openAiKey = "openAiKey";
 
                 var botClient = new TelegramBotClient(botToken);
